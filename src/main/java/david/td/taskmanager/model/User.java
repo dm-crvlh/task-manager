@@ -1,6 +1,8 @@
 package david.td.taskmanager.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -11,6 +13,21 @@ public class User {
     private String username;
     private String password;
     private String email;
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private List<Role> roles = new ArrayList<>();
+
 
     public User(Long id, String username, String password, String email) {
         this.id = id;
@@ -51,6 +68,4 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-
-
 }
