@@ -3,7 +3,9 @@ package david.td.taskmanager.controller;
 import david.td.taskmanager.model.User;
 import david.td.taskmanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.ui.Model;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -44,7 +46,11 @@ public class AuthentificationController {
     }
 
     @GetMapping("/main")
-    public String showMainPage() {
+    public String showMainPage(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(authentication.getName());
+        System.out.println(user.getUsername());
+        model.addAttribute("user", user);
         return "main";
     }
 }
