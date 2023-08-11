@@ -44,7 +44,6 @@ public class AuthentificationController {
     }
 
     @GetMapping("/main")
-    @PreAuthorize("isAuthenticated()")
     public String showMainPage() {
         return "main";
     }
