@@ -1,7 +1,9 @@
 package david.td.taskmanager.service;
 
+import david.td.taskmanager.model.Company;
 import david.td.taskmanager.model.Role;
 import david.td.taskmanager.model.User;
+import david.td.taskmanager.repository.CompanyRepository;
 import david.td.taskmanager.repository.RoleRepository;
 import david.td.taskmanager.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +26,14 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private CompanyRepository companyRepository;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public void registerUser(User user) {
+    public void registerUser(User user, Long selectedCompanyId) {
         String hashedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashedPassword);
 
@@ -39,8 +43,11 @@ public class UserServiceImpl implements UserService {
             userRole.setName("USER");
             roleRepository.save(userRole);
         }
-
         user.setRoles(Collections.singletonList(userRole));
+        Company company = companyRepository.findById(selectedCompanyId).orElse(null);
+        if (company != null) {
+            user.setCompany(company);
+        }
         System.out.println(user.getRoles().get(0).getName());
         userRepository.save(user);
     }

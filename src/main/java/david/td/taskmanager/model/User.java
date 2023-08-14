@@ -28,6 +28,11 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
+
+
 
     public User(Long id, String username, String password, String email) {
         this.id = id;
@@ -67,5 +72,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 }
