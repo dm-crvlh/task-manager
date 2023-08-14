@@ -24,6 +24,13 @@
             <input type="email" id="email" name="email" class="form-control" required>
         </div>
 
+        <div class="mb-3">
+            <label for="company" class="form-label">Entreprise:</label>
+            <select id="company" name="companyId" class="form-control" required>
+                <option th:each="company : ${companies}" th:value="${company.id}" th:text="${company.name}"></option>
+            </select>
+        </div>
+
         <button type="submit" class="btn btn-primary">S'inscrire</button>
     </form>
 </div>
