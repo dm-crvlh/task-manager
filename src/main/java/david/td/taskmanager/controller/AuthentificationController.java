@@ -59,8 +59,11 @@ public class AuthentificationController {
     public String showMainPage(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findByUsername(authentication.getName());
-        System.out.println(user.getUsername());
+        Company company = companyRepository.findByEmployees(user);
+        List<Project> projects = company.getProjects();
+        model.addAttribute("company", company);
         model.addAttribute("user", user);
+        model.addAttribute("projects", projects);
         return "main";
     }
 }

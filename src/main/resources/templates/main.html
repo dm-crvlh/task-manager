@@ -11,8 +11,9 @@
     <!-- Use Bootstrap classes to style the header -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container d-flex justify-content-between">
-            <a class="navbar-brand" href="#">Company name</a>
+            <a class="navbar-brand" th:text="${company.name}">Company name</a>
             <a class="nav-link" th:text="${user.username}"></a>
+            <a class="nav-link" href="/logout">logout</a>
         </div>
     </nav>
 </header>
@@ -20,12 +21,8 @@
 <div class="container mt-4">
     <table class="table">
         <thead>
-        <tr>
-            <th>Tasks</th>
-            <th>Todo</th>
-            <th>In progress</th>
-            <th>Done</th>
-            <th>Employee</th>
+        <tr th:each="project : ${projects}">
+            <td th:text="${project.name}"></td>
         </tr>
         </thead>
         <tbody>
