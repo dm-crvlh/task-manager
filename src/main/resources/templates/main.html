@@ -22,7 +22,7 @@
 <div class="container mt-4">
     <table class="table">
         <tr th:each="project : ${projects}">
-            <td th:text="${project.name}"></td>
+            <td><a th:href="@{/task-manager/{projectId}(projectId=${project.id})}"><span th:text="${project.name}"></span></a></td>
         </tr>
         <tr>
             <td><img id="plus_logo" th:src="@{/images/plus_logo.png}" alt="plus logo"></td>

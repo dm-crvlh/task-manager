@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -36,5 +39,13 @@ public class ProjectController {
         projectService.addProject(newProject);
 
         return "redirect:/main"; // Redirect back to the main page after adding the project
+    }
+
+    @GetMapping("/task-manager/{projectId}")
+    public String showTaskManagerPage(@PathVariable Long projectId, Model model) {
+        Project project = projectService.getProjectById(projectId);
+        model.addAttribute("project", project);
+
+        return "task-manager";
     }
 }
