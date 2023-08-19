@@ -5,10 +5,7 @@ import david.td.taskmanager.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ProjectService {
@@ -19,8 +16,8 @@ public class ProjectService {
         projectRepository.save(project);
     }
 
-    public Project getProjectById(Long id) {
-        return projectRepository.findById(id).orElse(null);
+    public Optional<Project> getProjectById(Long id) {
+        return projectRepository.findById(id);
     }
 
 }

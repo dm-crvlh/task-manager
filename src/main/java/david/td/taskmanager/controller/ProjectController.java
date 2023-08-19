@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class ProjectController {
@@ -46,10 +47,15 @@ public class ProjectController {
 
     @GetMapping("/task-manager/{projectId}")
     public String showTaskManagerPage(@PathVariable Long projectId, Model model) {
-        Project project = projectService.getProjectById(projectId);
-        List<Task> tasks = project.getTasks();
-        model.addAttribute("project", project);
-        model.addAttribute("tasks", tasks);
+        Optional<Project> optionnalProject = projectService.getProjectById(projectId);
+        if (!optionnalProject.isPresent()) {
+            return "redirect:/main";
+        }else {
+            Project project = optionnalProject.get();
+            List<Task> tasks = project.getTasks();
+            model.addAttribute("project", project);
+            model.addAttribute("tasks", tasks);
+        }
 
         return "task-manager";
     }
