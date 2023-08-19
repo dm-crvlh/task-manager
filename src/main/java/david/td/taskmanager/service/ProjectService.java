@@ -13,7 +13,7 @@ import java.util.Map;
 @Service
 public class ProjectService {
     @Autowired
-    private ProjectRepository projectRepository; // Assuming you have a ProjectRepository
+    private ProjectRepository projectRepository;
 
     public void addProject(Project project) {
         projectRepository.save(project);

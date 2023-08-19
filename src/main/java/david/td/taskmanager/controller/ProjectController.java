@@ -2,6 +2,7 @@ package david.td.taskmanager.controller;
 
 import david.td.taskmanager.model.Company;
 import david.td.taskmanager.model.Project;
+import david.td.taskmanager.model.Task;
 import david.td.taskmanager.model.User;
 import david.td.taskmanager.repository.CompanyRepository;
 import david.td.taskmanager.service.ProjectService;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Controller
 public class ProjectController {
@@ -38,13 +41,15 @@ public class ProjectController {
         newProject.setCompany(company);
         projectService.addProject(newProject);
 
-        return "redirect:/main"; // Redirect back to the main page after adding the project
+        return "redirect:/main";
     }
 
     @GetMapping("/task-manager/{projectId}")
     public String showTaskManagerPage(@PathVariable Long projectId, Model model) {
         Project project = projectService.getProjectById(projectId);
+        List<Task> tasks = project.getTasks();
         model.addAttribute("project", project);
+        model.addAttribute("tasks", tasks);
 
         return "task-manager";
     }

@@ -1,6 +1,7 @@
 package david.td.taskmanager.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Project {
@@ -17,6 +18,16 @@ public class Project {
     @JoinColumn(name = "company_id")
     private Company company;
 
+    @OneToMany(mappedBy = "project")
+    private List<Task> tasks;
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
     public Company getCompany() {
         return company;
     }
