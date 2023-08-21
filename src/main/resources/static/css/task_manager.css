@@ -1,8 +1,14 @@
 #plus_logo {
-    width: 25px; /* Adjust the width as needed */
-    height: auto; /* This will maintain the aspect ratio */
+    display: block;
+    width: 25px;
+    height: auto;
+    margin: auto;
 }
 
 #taskForm {
     display: none;
 }
+
+.task-name, .task-status {
+        margin: 5px;
+    }

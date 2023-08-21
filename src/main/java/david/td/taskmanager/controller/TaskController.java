@@ -6,9 +6,7 @@ import david.td.taskmanager.repository.ProjectRepository;
 import david.td.taskmanager.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -29,6 +27,7 @@ public class TaskController {
         if (optionalProject.isPresent()) {
             Project project = optionalProject.get();
             task.setProject(project);
+            task.setStatus("todo");
             project.getTasks().add(task);
 
             projectRepository.save(project);
