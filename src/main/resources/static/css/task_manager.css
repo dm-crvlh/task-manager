@@ -9,6 +9,10 @@
     display: none;
 }
 
-.task-name, .task-status {
-        margin: 5px;
-    }
+.task-name {
+        cursor: grab;
+}
+
+h2 {
+    text-align: center;
+}

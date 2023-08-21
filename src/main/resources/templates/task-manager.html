@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Main</title>
-    <!-- Add Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/task_manager.css" rel="stylesheet">
 </head>
 <body>
 <header>
-    <!-- Use Bootstrap classes to style the header -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container d-flex justify-content-between">
             <a class="navbar-brand" href="#">Company name</a>
@@ -30,9 +28,16 @@
                     <th>Actions</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="todoColumn" data-status="todo">
                 <tr th:each="task: ${tasks}" th:if="${task.status == 'todo'}">
                     <td th:text="${task.name}"></td>
+                    <td>
+                        <select class="form-select" th:attr="data-task-id=${task.id}" onchange="updateTaskStatus(this)">
+                            <option value="todo" selected>Todo</option>
+                            <option value="inprogress">In Progress</option>
+                            <option value="done">Done</option>
+                        </select>
+                    </td>
                 </tr>
                 <tr>
                     <td><img id="plus_logo" th:src="@{/images/plus_logo.png}" alt="plus logo"></td>
@@ -49,9 +54,16 @@
                     <th>Actions</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="inProgressColumn" data-status="inprogress">
                 <tr th:each="task: ${tasks}" th:if="${task.status == 'inprogress'}">
                     <td th:text="${task.name}"></td>
+                    <td>
+                        <select class="form-select" th:attr="data-task-id=${task.id}" onchange="updateTaskStatus(this)">
+                            <option value="todo">Todo</option>
+                            <option value="inprogress" selected>In Progress</option>
+                            <option value="done">Done</option>
+                        </select>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -65,9 +77,16 @@
                     <th>Actions</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="doneColumn" data-status="done">
                 <tr th:each="task: ${tasks}" th:if="${task.status == 'done'}">
                     <td th:text="${task.name}"></td>
+                    <td>
+                        <select class="form-select" th:attr="data-task-id=${task.id}" onchange="updateTaskStatus(this)">
+                            <option value="todo">Todo</option>
+                            <option value="inprogress">In Progress</option>
+                            <option value="done" selected>Done</option>
+                        </select>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -82,10 +101,30 @@
     </form>
 </div>
 
-<!-- Add Bootstrap JavaScript (Popper.js and Bootstrap.js) -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 <script>
+    function updateTaskStatus(selectElement) {
+        const taskId = selectElement.getAttribute("data-task-id");
+        const newStatus = selectElement.value;
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", `/updateTaskStatus/${taskId}`, true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    location.reload();
+                } else {
+                    console.error("An error occurred:", xhr.statusText);
+                }
+            }
+        };
+
+        xhr.send(`status=${newStatus}`);
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
         const plusLogo = document.getElementById("plus_logo");
         const taskForm = document.getElementById("taskForm");
