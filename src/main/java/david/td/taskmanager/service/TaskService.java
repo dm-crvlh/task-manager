@@ -25,4 +25,13 @@ public class TaskService {
 
         return false;
     }
+
+    public Task getTaskById(Long taskId) {
+        Optional<Task> optionalTask = taskRepository.findById(taskId);
+        return optionalTask.orElse(null);
+    }
+
+    public void saveTask(Task task) {
+        taskRepository.save(task);
+    }
 }

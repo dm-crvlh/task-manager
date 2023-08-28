@@ -53,4 +53,30 @@ public class TaskController {
         }
     }
 
+    @PostMapping("/deleteTask/{taskId}")
+    public ResponseEntity<String> deleteTask(@PathVariable Long taskId) {
+        Optional<Task> optionalTask = taskRepository.findById(taskId);
+
+        if (optionalTask.isPresent()) {
+            Task task = optionalTask.get();
+            task.setStatus("deleted");
+            taskRepository.save(task);
+
+            return ResponseEntity.ok("Task deleted successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found");
+        }
+    }
+
+    @PostMapping("/editTask/{taskId}")
+    public String editTask(@PathVariable Long taskId, @RequestParam String newTaskName) {
+        Task task = taskService.getTaskById(taskId);
+        if (task != null) {
+            task.setName(newTaskName);
+            taskService.saveTask(task);
+        }
+        return "redirect:/task-manager/" + task.getProject().getId();
+    }
+
+
 }

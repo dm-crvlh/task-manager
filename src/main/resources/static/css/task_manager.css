@@ -5,14 +5,24 @@
     margin: auto;
 }
 
-#taskForm {
+#taskForm, #taskEditForm {
     display: none;
 }
 
-.task-name {
+.task-name, .task-status {
         cursor: grab;
+        margin: 5px;
 }
 
+.form-select {
+    width: auto;
+    max-width: 100%;
+    }
 h2 {
     text-align: center;
+}
+
+.deleted-task {
+    color: gray;
+    text-decoration: line-through;
 }

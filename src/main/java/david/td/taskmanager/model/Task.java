@@ -15,6 +15,9 @@ public class Task {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    public Project getProject() {
+        return project;
+    }
     private String status; // "todo", "in progress", "done"
 
     public String getStatus() {
@@ -27,6 +30,10 @@ public class Task {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
