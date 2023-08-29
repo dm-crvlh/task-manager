@@ -22,7 +22,20 @@
 <div class="container mt-4">
     <table class="table">
         <tr th:each="project : ${projects}">
-            <td><a th:href="@{/task-manager/{projectId}(projectId=${project.id})}"><span th:text="${project.name}"></span></a></td>
+            <td><a th:href="@{/task-manager/{projectId}(projectId=${project.id})}"><span th:text="${project.name}"></span></a>
+                <div>
+                    <form class="edit-form" th:attr="data-task-id=${project.id}" style="display: none;">
+                        <input type="text" name="editedProjectName" th:value="${project.name}">
+                        <button class="save-button">Save</button>
+                        <button class="cancel-button">Cancel</button>
+                    </form>
+                </div>
+            </td>
+            <td>
+                <button class="edit-icon" th:attr="data-task-id=${project.id}, data-task-name=${project.name}">&#9998;</button>
+                <button class="delete-icon" th:attr="data-task-id=${project.id}" >&#128465;</button>
+            </td>
+
         </tr>
         <tr>
             <td><img id="plus_logo" th:src="@{/images/plus_logo.png}" alt="plus logo"></td>
@@ -50,7 +63,80 @@
         plusLogo.addEventListener("click", function() {
             projectForm.style.display = "block";
         });
+
+        const deleteButtons = document.querySelectorAll(".delete-icon");
+        deleteButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                const projectId = button.getAttribute("data-task-id");
+                deleteProject(projectId);
+            });
+        });
+
+        function deleteProject(projectId) {
+            const xhr = new XMLHttpRequest();
+            xhr.open("DELETE", `/deleteProject/${projectId}`, true);
+
+            xhr.onload = function() {
+                if (xhr.status === 204) {
+                    // Actualisez la page ou effectuez toute autre action nécessaire
+                    location.reload();
+                } else {
+                    console.error("Error deleting project:", xhr.statusText);
+                }
+            };
+
+            xhr.onerror = function() {
+                console.error("Network error");
+            };
+
+            xhr.send();
+        }
+    const editButtons = document.querySelectorAll(".edit-icon");
+    editButtons.forEach(button => {
+        button.addEventListener("click", function() {
+            const projectId = button.getAttribute("data-task-id");
+            const editForm = document.querySelector(`.edit-form[data-task-id="${projectId}"]`);
+            editForm.style.display = "block";
+        });
     });
+
+    const saveButtons = document.querySelectorAll(".save-button");
+    saveButtons.forEach(button => {
+        button.addEventListener("click", function(event) {
+            event.preventDefault();
+            const projectId = button.parentElement.getAttribute("data-task-id");
+            const editedProjectName = button.parentElement.querySelector('input[name="editedProjectName"]').value;
+            saveEditedProject(projectId, editedProjectName);
+        });
+    });
+
+    const cancelButtons = document.querySelectorAll(".cancel-button");
+    cancelButtons.forEach(button => {
+        button.addEventListener("click", function(event) {
+            event.preventDefault();
+            const editForm = button.parentElement;
+            editForm.style.display = "none";
+        });
+    });
+
+    function saveEditedProject(projectId, editedProjectName) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", `/updateProjectName/${projectId}`, true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    location.reload();
+                } else {
+                    console.error("An error occurred:", xhr.statusText);
+                }
+            }
+        };
+
+        xhr.send(`projectName=${editedProjectName}`);
+    }
+});
 </script>
 </body>
 </html>
