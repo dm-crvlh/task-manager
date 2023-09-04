@@ -20,16 +20,16 @@ public class Task {
     }
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User assignedUser;
+    @JoinColumn(name = "employee_id")
+    private Employee assignedEmployee;
     private String status; // "todo", "in progress", "done"
 
-    public User getAssignedUser() {
-        return assignedUser;
+    public Employee getAssignedEmployee() {
+        return assignedEmployee;
     }
 
-    public void setAssignedUser(User assignedUser) {
-        this.assignedUser = assignedUser;
+    public void setAssignedEmployee(Employee assignedEmployee) {
+        this.assignedEmployee = assignedEmployee;
     }
 
     public String getStatus() {

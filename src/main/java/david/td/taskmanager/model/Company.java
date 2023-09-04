@@ -19,8 +19,12 @@ public class Company {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @OneToMany(mappedBy = "company")
-    private List<User> employees = new ArrayList<>();
+    private List<Employee> employees = new ArrayList<>();
     @OneToMany(mappedBy = "company")
     private List<Project> projects = new ArrayList<>();
 
@@ -32,8 +36,6 @@ public class Company {
         return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+
 
 }

@@ -3,7 +3,7 @@ package david.td.taskmanager.controller;
 import david.td.taskmanager.model.Company;
 import david.td.taskmanager.model.Project;
 import david.td.taskmanager.model.Task;
-import david.td.taskmanager.model.User;
+import david.td.taskmanager.model.Employee;
 import david.td.taskmanager.repository.CompanyRepository;
 import david.td.taskmanager.service.ProjectService;
 import david.td.taskmanager.service.UserService;
@@ -34,8 +34,8 @@ public class ProjectController {
     @PostMapping("/addProject")
     public String addProject(@RequestParam String projectName) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findByUsername(authentication.getName());
-        Company company = companyRepository.findByEmployees(user);
+        Employee employee = userService.findByUsername(authentication.getName());
+        Company company = companyRepository.findByEmployees(employee);
         Project newProject = new Project();
         newProject.setName(projectName);
         newProject.setCompany(company);
@@ -52,10 +52,10 @@ public class ProjectController {
         } else {
             Project project = optionnalProject.get();
             List<Task> tasks = project.getTasks();
-            List<User> users = userService.findAllUsersByCompany(project.getCompany().getId());
+            List<Employee> employees = userService.findAllUsersByCompany(project.getCompany().getId());
             model.addAttribute("project", project);
             model.addAttribute("tasks", tasks);
-            model.addAttribute("users", users);
+            model.addAttribute("employees", employees);
         }
 
         return "task-manager";

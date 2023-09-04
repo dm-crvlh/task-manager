@@ -1,8 +1,8 @@
 package david.td.taskmanager.controller;
 
 import david.td.taskmanager.model.Company;
+import david.td.taskmanager.model.Employee;
 import david.td.taskmanager.model.Project;
-import david.td.taskmanager.model.User;
 import david.td.taskmanager.repository.CompanyRepository;
 import david.td.taskmanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,19 +50,19 @@ public class AuthentificationController {
     }
 
     @PostMapping("/register")
-    public String processRegisterForm(@ModelAttribute("user") User user, @RequestParam("companyId") Long company) {
-        userService.registerUser(user, company);
+    public String processRegisterForm(@ModelAttribute("user") Employee employee, @RequestParam("companyId") Long company) {
+        userService.registerUser(employee, company);
         return "redirect:/login";
     }
 
     @GetMapping("/main")
     public String showMainPage(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findByUsername(authentication.getName());
-        Company company = companyRepository.findByEmployees(user);
+        Employee employee = userService.findByUsername(authentication.getName());
+        Company company = companyRepository.findByEmployees(employee);
         List<Project> projects = company.getProjects();
         model.addAttribute("company", company);
-        model.addAttribute("user", user);
+        model.addAttribute("employee", employee);
         model.addAttribute("projects", projects);
         return "main";
     }

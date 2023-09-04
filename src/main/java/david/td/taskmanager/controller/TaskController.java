@@ -2,7 +2,7 @@ package david.td.taskmanager.controller;
 
 import david.td.taskmanager.model.Project;
 import david.td.taskmanager.model.Task;
-import david.td.taskmanager.model.User;
+import david.td.taskmanager.model.Employee;
 import david.td.taskmanager.repository.ProjectRepository;
 import david.td.taskmanager.repository.TaskRepository;
 import david.td.taskmanager.service.TaskService;
@@ -78,9 +78,9 @@ public class TaskController {
         Task task = taskService.getTaskById(taskId);
         if (task != null) {
             task.setName(newTaskName);
-            User user = userService.getUserById(selectedEmployee);
-            if (user != null) {
-                task.setAssignedUser(user);
+            Employee employee = userService.getUserById(selectedEmployee);
+            if (employee != null) {
+                task.setAssignedEmployee(employee);
             }
             taskService.saveTask(task);
         }

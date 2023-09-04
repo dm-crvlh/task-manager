@@ -9,9 +9,7 @@ public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    public Long getId() {
-        return id;
-    }
+
     private String name;
 
     @ManyToOne
@@ -20,6 +18,10 @@ public class Project {
 
     @OneToMany(mappedBy = "project")
     private List<Task> tasks;
+
+    public Long getId() {
+        return id;
+    }
 
     public List<Task> getTasks() {
         return tasks;
