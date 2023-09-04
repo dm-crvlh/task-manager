@@ -2,9 +2,11 @@ package david.td.taskmanager.controller;
 
 import david.td.taskmanager.model.Project;
 import david.td.taskmanager.model.Task;
+import david.td.taskmanager.model.User;
 import david.td.taskmanager.repository.ProjectRepository;
 import david.td.taskmanager.repository.TaskRepository;
 import david.td.taskmanager.service.TaskService;
+import david.td.taskmanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,9 @@ public class TaskController {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private TaskRepository taskRepository;
@@ -69,10 +74,14 @@ public class TaskController {
     }
 
     @PostMapping("/editTask/{taskId}")
-    public String editTask(@PathVariable Long taskId, @RequestParam String newTaskName) {
+    public String editTask(@PathVariable Long taskId, @RequestParam String newTaskName, @RequestParam Long selectedEmployee) {
         Task task = taskService.getTaskById(taskId);
         if (task != null) {
             task.setName(newTaskName);
+            User user = userService.getUserById(selectedEmployee);
+            if (user != null) {
+                task.setAssignedUser(user);
+            }
             taskService.saveTask(task);
         }
         return "redirect:/task-manager/" + task.getProject().getId();

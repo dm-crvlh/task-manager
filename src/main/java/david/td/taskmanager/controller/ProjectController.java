@@ -52,8 +52,10 @@ public class ProjectController {
         } else {
             Project project = optionnalProject.get();
             List<Task> tasks = project.getTasks();
+            List<User> users = userService.findAllUsersByCompany(project.getCompany().getId());
             model.addAttribute("project", project);
             model.addAttribute("tasks", tasks);
+            model.addAttribute("users", users);
         }
 
         return "task-manager";

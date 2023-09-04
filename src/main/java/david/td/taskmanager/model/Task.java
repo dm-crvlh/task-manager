@@ -18,7 +18,19 @@ public class Task {
     public Project getProject() {
         return project;
     }
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User assignedUser;
     private String status; // "todo", "in progress", "done"
+
+    public User getAssignedUser() {
+        return assignedUser;
+    }
+
+    public void setAssignedUser(User assignedUser) {
+        this.assignedUser = assignedUser;
+    }
 
     public String getStatus() {
         return status;

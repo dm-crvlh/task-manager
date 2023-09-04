@@ -71,4 +71,16 @@ public class UserService {
         }
         return false;
     }
+
+    public List<User> findAllUsersByCompany(Long companyId) {
+        Company company = companyRepository.findById(companyId).orElse(null);
+        if (company != null) {
+            return userRepository.findAllByCompany(company);
+        }
+        return Collections.emptyList(); // Retourne une liste vide si l'entreprise n'est pas trouvée
+    }
+
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId).orElse(null);
+    }
 }

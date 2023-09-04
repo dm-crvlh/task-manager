@@ -42,6 +42,7 @@
                 <thead>
                 <tr>
                     <th>Task Name</th>
+                    <th>Responsable</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -56,7 +57,10 @@
                         </select>
                     </td>
                     <td>
-                        <button class="edit-icon" th:attr="data-task-id=${task.id}, data-project-id=${project.id}, data-task-name=${task.name}" onclick="showEditForm(this)">&#9998;</button>
+                        <span th:text="${task.assignedUser != null ? task.assignedUser.username : 'Non assigné'}"></span>
+                    </td>
+                    <td>
+                        <button class="edit-icon" th:attr="data-task-id=${task.id}, data-project-id=${project.id}, data-task-name=${task.name}, data-task-assignedUser=${task.assignedUser != null ? task.assignedUser.id : ''}" onclick="showEditForm(this)">&#9998;</button>
                         <button class="delete-icon" th:attr="data-task-id=${task.id}" onclick="deleteTask(this)">&#128465;</button>
                     </td>
                 </tr>
@@ -78,6 +82,7 @@
                 <thead>
                 <tr>
                     <th>Task Name</th>
+                    <th>Responsable</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -92,9 +97,13 @@
                         </select>
                     </td>
                     <td>
-                        <button class="edit-icon" th:attr="data-task-id=${task.id}, data-project-id=${project.id}, data-task-name=${task.name}" onclick="showEditForm(this)">&#9998;</button>
+                        <span th:text="${task.assignedUser != null ? task.assignedUser.username : 'Non assigné'}"></span>
+                    </td>
+                    <td>
+                        <button class="edit-icon" th:attr="data-task-id=${task.id}, data-project-id=${project.id}, data-task-name=${task.name}, data-task-assignedUser=${task.assignedUser != null ? task.assignedUser.id : ''}" onclick="showEditForm(this)">&#9998;</button>
                         <button class="delete-icon" th:attr="data-task-id=${task.id}" onclick="deleteTask(this)">&#128465;</button>
                     </td>
+
                 </tr>
                 </tbody>
             </table>
@@ -105,6 +114,7 @@
                 <thead>
                 <tr>
                     <th>Task Name</th>
+                    <th>Responsable</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -119,7 +129,10 @@
                         </select>
                     </td>
                     <td>
-                        <button class="edit-icon" th:attr="data-task-id=${task.id}, data-project-id=${project.id}, data-task-name=${task.name}" onclick="showEditForm(this)">&#9998;</button>
+                        <span th:text="${task.assignedUser != null ? task.assignedUser.username : 'Non assigné'}"></span>
+                    </td>
+                    <td>
+                        <button class="edit-icon" th:attr="data-task-id=${task.id}, data-project-id=${project.id}, data-task-name=${task.name}, data-task-assignedUser=${task.assignedUser != null ? task.assignedUser.id : ''}" onclick="showEditForm(this)">&#9998;</button>
                         <button class="delete-icon" th:attr="data-task-id=${task.id}" onclick="deleteTask(this)">&#128465;</button>
                     </td>
                 </tr>
@@ -129,8 +142,15 @@
         <div id="editForm" class="container mt-4" style="display: none;">
             <form action="/editTask/{taskId}" method="post">
                 <input type="hidden" name="taskId">
-                <input type="text" name="projectId" th:value="${project.id}">
+
+                <label for="employee-select">Task name :</label>
                 <input type="text" name="newTaskName" placeholder="New Task Name">
+                <br/>
+                <label for="employee-select">Assign to :</label>
+                <select id="employee-select" name="selectedEmployee">
+                    <option value="">Sélectionnez un employé</option>
+                    <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}"></option>
+                </select>
                 <button type="submit">Update Task</button>
                 <button type="button" id="cancelEditButton">Cancel</button>
             </form>
@@ -188,14 +208,33 @@
 
     function showEditForm(editButton) {
         const taskId = editButton.getAttribute("data-task-id");
-        const taskName = editButton.getAttribute("data-task-name"); // Get the task name from the attribute
+        const taskName = editButton.getAttribute("data-task-name");
+        const taskAssignedUser = editButton.getAttribute("data-task-assignedUser");
+
         const editForm = document.getElementById("editForm");
+
 
         editForm.style.display = "block";
         const form = editForm.querySelector("form");
         form.action = `/editTask/${taskId}`;
         form.querySelector("[name=taskId]").value = taskId;
         form.querySelector("[name=newTaskName]").value = taskName; // Set the task name in the input field
+
+        const employeeSelect = form.querySelector("#employee-select");
+        const users = document.querySelectorAll("#employee-select option");
+        if (taskAssignedUser !== null) {
+
+            // Si taskAssignedUser n'est pas nul, recherchez et sélectionnez l'option correspondante
+            for (const userOption of users) {
+                if (userOption.value === taskAssignedUser) {
+                    userOption.selected = true;
+                    break;
+                }
+            }
+        } else {
+            // Si taskAssignedUser est nul, définissez la valeur de l'élément <select> sur une chaîne vide, ce qui sélectionnera l'option par défaut "Sélectionnez un employé".
+            employeeSelect.value = "";
+        }
     }
 
     document.addEventListener("DOMContentLoaded", function() {
