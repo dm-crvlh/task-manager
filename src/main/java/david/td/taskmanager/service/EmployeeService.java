@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
-public class UserService {
+public class EmployeeService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -82,5 +82,15 @@ public class UserService {
 
     public Employee getUserById(Long userId) {
         return employeeRepository.findById(userId).orElse(null);
+    }
+
+    public boolean isUsernameAlreadyUsed(String username) {
+        Employee existingEmployee = employeeRepository.findByUsername(username);
+        return existingEmployee != null;
+    }
+
+    public boolean isEmailAlreadyUsed(String email) {
+        Employee existingEmployee = employeeRepository.findByEmail(email);
+        return existingEmployee != null;
     }
 }

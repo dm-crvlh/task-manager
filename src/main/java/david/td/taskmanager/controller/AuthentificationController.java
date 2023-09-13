@@ -3,8 +3,8 @@ package david.td.taskmanager.controller;
 import david.td.taskmanager.model.Company;
 import david.td.taskmanager.model.Employee;
 import david.td.taskmanager.model.Project;
-import david.td.taskmanager.repository.CompanyRepository;
-import david.td.taskmanager.service.UserService;
+import david.td.taskmanager.service.CompanyService;
+import david.td.taskmanager.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.security.core.Authentication;
@@ -22,10 +22,10 @@ import java.util.List;
 public class AuthentificationController {
 
     @Autowired
-    private UserService userService;
+    private EmployeeService employeeService;
 
     @Autowired
-    private CompanyRepository companyRepository;
+    private CompanyService companyService;
 
     @GetMapping("/login")
     public String login() {
@@ -34,14 +34,14 @@ public class AuthentificationController {
 
     @GetMapping("/register")
     public String showRegisterPage(Model model) {
-        List<Company> companies = companyRepository.findAll();
+        List<Company> companies = companyService.getAllCompanies();
         model.addAttribute("companies", companies);
         return "register";
     }
 
     @PostMapping("/login")
     public String processLoginForm(@RequestParam("username") String username, @RequestParam("password") String password, RedirectAttributes redirectAttributes) {
-        if (userService.authenticateUser(username,password)){
+        if (employeeService.authenticateUser(username,password)){
             return "redirect:/main";
         } else{
             redirectAttributes.addFlashAttribute("error", "Nom d'utilisateur incorrect");
@@ -50,16 +50,26 @@ public class AuthentificationController {
     }
 
     @PostMapping("/register")
-    public String processRegisterForm(@ModelAttribute("user") Employee employee, @RequestParam("companyId") Long company) {
-        userService.registerUser(employee, company);
+    public String processRegisterForm(@ModelAttribute("user") Employee employee, @RequestParam("companyId") Long company, Model model) {
+        if (employeeService.isUsernameAlreadyUsed(employee.getUsername())) {
+            model.addAttribute("usernameError", "Nom d'utilisateur déjà utilisé");
+            return showRegisterPage(model);
+        }
+
+        if (employeeService.isEmailAlreadyUsed(employee.getEmail())) {
+            model.addAttribute("emailError", "E-mail déjà utilisé");
+            return showRegisterPage(model);
+        }
+
+        employeeService.registerUser(employee, company);
         return "redirect:/login";
     }
 
     @GetMapping("/main")
     public String showMainPage(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Employee employee = userService.findByUsername(authentication.getName());
-        Company company = companyRepository.findByEmployees(employee);
+        Employee employee = employeeService.findByUsername(authentication.getName());
+        Company company = companyService.findByEmployee(employee);
         List<Project> projects = company.getProjects();
         model.addAttribute("company", company);
         model.addAttribute("employee", employee);
