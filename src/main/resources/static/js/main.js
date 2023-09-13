@@ -46,7 +46,6 @@ document.addEventListener("DOMContentLoaded", function() {
     function deleteProject(projectId) {
         const xhr = new XMLHttpRequest();
         xhr.open("DELETE", `/deleteProject/${projectId}`, true);
-
         xhr.onload = function() {
             if (xhr.status === 204) {
                 location.reload();

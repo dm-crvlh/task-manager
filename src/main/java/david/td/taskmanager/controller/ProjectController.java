@@ -6,7 +6,7 @@ import david.td.taskmanager.model.Task;
 import david.td.taskmanager.model.Employee;
 import david.td.taskmanager.repository.CompanyRepository;
 import david.td.taskmanager.service.ProjectService;
-import david.td.taskmanager.service.UserService;
+import david.td.taskmanager.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,20 +27,25 @@ public class ProjectController {
     private ProjectService projectService;
 
     @Autowired
-    private UserService userService;
+    private EmployeeService employeeService;
 
     @Autowired
     private CompanyRepository companyRepository;
 
     @PostMapping("/addProject")
-    public String addProject(@RequestParam String projectName) {
+    public String addProject(@RequestParam String projectName, RedirectAttributes redirectAttributes) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Employee employee = userService.findByUsername(authentication.getName());
+        Employee employee = employeeService.findByUsername(authentication.getName());
         Company company = companyRepository.findByEmployees(employee);
-        Project newProject = new Project();
-        newProject.setName(projectName);
-        newProject.setCompany(company);
-        projectService.addProject(newProject);
+
+        if (projectService.isProjectNameExistsForCompany(projectName, company)) {
+            redirectAttributes.addFlashAttribute("projectExistsError", "This project name already exists for this company.");
+        } else {
+            Project newProject = new Project();
+            newProject.setName(projectName);
+            newProject.setCompany(company);
+            projectService.addProject(newProject);
+        }
 
         return "redirect:/main";
     }
@@ -52,7 +58,7 @@ public class ProjectController {
         } else {
             Project project = optionnalProject.get();
             List<Task> tasks = project.getTasks();
-            List<Employee> employees = userService.findAllUsersByCompany(project.getCompany().getId());
+            List<Employee> employees = employeeService.findAllUsersByCompany(project.getCompany().getId());
             model.addAttribute("project", project);
             model.addAttribute("tasks", tasks);
             model.addAttribute("employees", employees);
@@ -77,18 +83,21 @@ public class ProjectController {
     }
 
     @PostMapping("/updateProjectName/{projectId}")
-    public ResponseEntity<Void> updateProjectName(@PathVariable Long projectId, @RequestParam String projectName) {
+    public String updateProjectName(@PathVariable Long projectId, @RequestParam String projectName, RedirectAttributes redirectAttributes) {
         Optional<Project> optionalProject = projectService.getProjectById(projectId);
 
         if (optionalProject.isPresent()) {
             Project project = optionalProject.get();
-            project.setName(projectName);
-            projectService.saveProject(project);
-
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            // Vérifiez si le nouveau nom de projet existe déjà pour cette entreprise
+            if (projectService.isProjectNameExistsForCompany(projectName, project.getCompany())) {
+                redirectAttributes.addFlashAttribute("projectUpdateError", "The project name already exists.");
+            } else {
+                project.setName(projectName);
+                projectService.saveProject(project);
+            }
         }
+
+        return "redirect:/main";
     }
 
 }

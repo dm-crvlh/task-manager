@@ -1,5 +1,6 @@
 package david.td.taskmanager.service;
 
+import david.td.taskmanager.model.Company;
 import david.td.taskmanager.model.Project;
 import david.td.taskmanager.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,5 +38,11 @@ public class ProjectService {
 
     public void saveProject(Project project) {
         projectRepository.save(project);
+    }
+
+    public boolean isProjectNameExistsForCompany(String projectName, Company company) {
+        Project existingProject = projectRepository.findByCompanyAndName(company, projectName);
+
+        return existingProject != null;
     }
 }
