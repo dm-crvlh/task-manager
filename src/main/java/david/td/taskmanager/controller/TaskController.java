@@ -6,12 +6,13 @@ import david.td.taskmanager.model.Employee;
 import david.td.taskmanager.repository.ProjectRepository;
 import david.td.taskmanager.repository.TaskRepository;
 import david.td.taskmanager.service.TaskService;
-import david.td.taskmanager.service.UserService;
+import david.td.taskmanager.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
@@ -25,24 +26,28 @@ public class TaskController {
     private TaskService taskService;
 
     @Autowired
-    private UserService userService;
+    private EmployeeService employeeService;
 
     @Autowired
     private TaskRepository taskRepository;
     @PostMapping("/addTask/{projectId}")
-    public String addTask(@PathVariable Long projectId, @RequestParam String taskName) {
-        Task task = new Task();
-        task.setName(taskName);
-
+    public String addTask(@PathVariable Long projectId, @RequestParam String taskName, RedirectAttributes redirectAttributes) {
         Optional<Project> optionalProject = projectRepository.findById(projectId);
         if (optionalProject.isPresent()) {
             Project project = optionalProject.get();
-            task.setProject(project);
-            task.setStatus("todo");
-            project.getTasks().add(task);
 
-            projectRepository.save(project);
-            taskRepository.save(task);
+            if (taskService.isTaskNameExistsInProject(taskName, project)) {
+                redirectAttributes.addFlashAttribute("taskExistsError", "A task with this name already exists in the project.");
+            } else {
+                Task task = new Task();
+                task.setName(taskName);
+                task.setProject(project);
+                task.setStatus("todo");
+                project.getTasks().add(task);
+
+                projectRepository.save(project);
+                taskRepository.save(task);
+            }
         }
         return "redirect:/task-manager/" + projectId;
     }
@@ -74,15 +79,22 @@ public class TaskController {
     }
 
     @PostMapping("/editTask/{taskId}")
-    public String editTask(@PathVariable Long taskId, @RequestParam String newTaskName, @RequestParam Long selectedEmployee) {
+    public String editTask(@PathVariable Long taskId, @RequestParam String newTaskName, @RequestParam Optional<Long> selectedEmployee, RedirectAttributes redirectAttributes) {
+
         Task task = taskService.getTaskById(taskId);
         if (task != null) {
-            task.setName(newTaskName);
-            Employee employee = userService.getUserById(selectedEmployee);
-            if (employee != null) {
-                task.setAssignedEmployee(employee);
+            boolean isUnique = !taskService.isTaskNameExistsInProject(newTaskName, task.getProject());
+            if (isUnique) {
+                task.setName(newTaskName);
+                if (selectedEmployee.isPresent()) {
+                    Employee employee = employeeService.getUserById(selectedEmployee.get());
+                    task.setAssignedEmployee(employee);
+                }
+
+                taskService.saveTask(task);
+            }else {
+                redirectAttributes.addFlashAttribute("taskExistsError", "A task with this name already exists in the project.");
             }
-            taskService.saveTask(task);
         }
         return "redirect:/task-manager/" + task.getProject().getId();
     }

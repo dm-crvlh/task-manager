@@ -17,12 +17,14 @@ import java.io.IOException;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .authorizeRequests()
                     .antMatchers("/main").hasRole("USER")
+                    .antMatchers("/task-manager/**").hasRole("USER")
                     .antMatchers("/", "/**").access("permitAll()")
                 .and()
                 .logout()
@@ -50,4 +52,5 @@ public class SecurityConfig {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }

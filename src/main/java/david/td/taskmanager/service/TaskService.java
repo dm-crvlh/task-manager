@@ -44,4 +44,9 @@ public class TaskService {
             taskRepository.deleteAll(tasks);
         }
     }
+
+    public boolean isTaskNameExistsInProject(String taskName, Project project) {
+        // Rechercher si une tâche avec le même nom existe déjà dans le projet
+        return taskRepository.existsByNameAndProject(taskName, project);
+    }
 }
