@@ -11,9 +11,9 @@
 <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container d-flex justify-content-between">
-            <a class="navbar-brand" href="#">Company name</a>
+            <a class="navbar-brand" th:text="${company.name}"></a>
             <a class="nav-link" th:text="${project.name}"></a>
-            <a class="nav-link" href="/logout">logout</a>
+            <a class="nav-link" th:href="@{'/main'}">Back to Project List</a>
         </div>
     </nav>
 </header>

@@ -4,7 +4,7 @@ import david.td.taskmanager.model.Company;
 import david.td.taskmanager.model.Project;
 import david.td.taskmanager.model.Task;
 import david.td.taskmanager.model.Employee;
-import david.td.taskmanager.repository.CompanyRepository;
+import david.td.taskmanager.service.CompanyService;
 import david.td.taskmanager.service.ProjectService;
 import david.td.taskmanager.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +30,13 @@ public class ProjectController {
     private EmployeeService employeeService;
 
     @Autowired
-    private CompanyRepository companyRepository;
+    private CompanyService companyService;
 
     @PostMapping("/addProject")
     public String addProject(@RequestParam String projectName, RedirectAttributes redirectAttributes) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Employee employee = employeeService.findByUsername(authentication.getName());
-        Company company = companyRepository.findByEmployees(employee);
+        Company company = companyService.findByEmployee(employee);
 
         if (projectService.isProjectNameExistsForCompany(projectName, company)) {
             redirectAttributes.addFlashAttribute("projectExistsError", "This project name already exists for this company.");
@@ -59,9 +59,12 @@ public class ProjectController {
             Project project = optionnalProject.get();
             List<Task> tasks = project.getTasks();
             List<Employee> employees = employeeService.findAllUsersByCompany(project.getCompany().getId());
+            Company company = companyService.findByEmployee(employees.get(0));
+
             model.addAttribute("project", project);
             model.addAttribute("tasks", tasks);
             model.addAttribute("employees", employees);
+            model.addAttribute("company", company);
         }
 
         return "task-manager";
