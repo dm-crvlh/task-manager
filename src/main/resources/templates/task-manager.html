@@ -58,7 +58,7 @@
                         </select>
                     </td>
                     <td>
-                        <span th:text="${task.assignedEmployee != null ? task.assignedEmployee.username : 'Non assigné'}"></span>
+                        <span th:text="${task.assignedEmployee != null ? task.assignedEmployee.username : 'Not assigned'}"></span>
                     </td>
                     <td>
                         <button class="edit-icon" th:attr="data-task-id=${task.id}, data-project-id=${project.id}, data-task-name=${task.name}, data-task-assignedEmployee=${task.assignedEmployee != null ? task.assignedEmployee.id : ''}" onclick="showEditForm(this)">&#9998;</button>
@@ -98,7 +98,7 @@
                         </select>
                     </td>
                     <td>
-                        <span th:text="${task.assignedEmployee != null ? task.assignedEmployee.username : 'Non assigné'}"></span>
+                        <span th:text="${task.assignedEmployee != null ? task.assignedEmployee.username : 'Not assigned'}"></span>
                     </td>
                     <td>
                         <button class="edit-icon" th:attr="data-task-id=${task.id}, data-project-id=${project.id}, data-task-name=${task.name}, data-task-assignedEmployee=${task.assignedEmployee != null ? task.assignedEmployee.id : ''}" onclick="showEditForm(this)">&#9998;</button>
@@ -130,7 +130,7 @@
                         </select>
                     </td>
                     <td>
-                        <span th:text="${task.assignedEmployee != null ? task.assignedEmployee.username : 'Non assigné'}"></span>
+                        <span th:text="${task.assignedEmployee != null ? task.assignedEmployee.username : 'Not assigned'}"></span>
                     </td>
                     <td>
                         <button class="edit-icon" th:attr="data-task-id=${task.id}, data-project-id=${project.id}, data-task-name=${task.name}, data-task-assignedEmployee=${task.assignedEmployee != null ? task.assignedEmployee.id : ''}" onclick="showEditForm(this)">&#9998;</button>
