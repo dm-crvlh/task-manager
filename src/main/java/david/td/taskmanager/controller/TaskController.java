@@ -84,8 +84,9 @@ public class TaskController {
         Task task = taskService.getTaskById(taskId);
         if (task != null) {
             boolean isUnique = !taskService.isTaskNameExistsInProject(newTaskName, task.getProject());
-            if (isUnique) {
+            if (isUnique || selectedEmployee.isPresent()) {
                 task.setName(newTaskName);
+
                 if (selectedEmployee.isPresent()) {
                     Employee employee = employeeService.getUserById(selectedEmployee.get());
                     task.setAssignedEmployee(employee);
